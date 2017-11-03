@@ -278,7 +278,7 @@ sciMagnitude (a :+b) = a * a + b * b
 
 general :: RealFloat a => (Complex a -> Complex a -> Complex a) -> Complex a -> Int
 general g a 
-  | ((realPart a) < 0.24) && ((realPart a) > (-0.5)) && (abs (imagPart a) < 0.5) = 255
+  -- | ((realPart a) < 0.24) && ((realPart a) > (-0.5)) && (abs (imagPart a) < 0.5) = 255
   | otherwise =  count_iterations 0 (0 :+ 0) a 
   where 
     count_iterations n e x 
