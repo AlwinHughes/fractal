@@ -44,6 +44,8 @@ main = do
 --(writeFile "test777" $ ',':(show . mand)) list
   --writeFile "test666" $ show $ map mand list
   --let mand_list = map mand list
+  writePng ("benchmark.png") $ generateImage (\x y -> f 0.0005 (-2) (2) (2) x y) 8000 8000
+distraction = do
   print $ cpow (0:+1) (0:+1)
   print "set for generating mandlebrot set, mov for the movement of the mandelbrot, grp for graphical, rang for range in a gif, sci for scientific use"
   whatdo <- getLine
