@@ -1,0 +1,69 @@
+Log was started on the 2017-09-24 10:29:45 with mandv48
+
+2017-09-27 16:40:48, mandv51.png, z^(-rt2 :+ rt2)
+2017-09-27 16:51:27, mandv52.png, z^(rt2:+ -rt2),   as with previous images there is a small area of interest in the center surrounded by a circle of blue. the are is interst is slightly offset toward the real positive axis
+2017-09-27 17:05:30, mandv53.png, z^z, mostly blue but with small amount of detail in a pattern that is symetrical in the real axis
+2017-09-27 17:23:22, mandv54.png, z^5, 4 way symetrical pattern within a circle of blue
+2017-09-27 17:25:39, atest.png, a test to check that the program is working. z^2, it is not working correctly. is is adding a cicle of blue around everything
+2017-09-27 17:28:05, atest2.png, testing the program has been fixed z^2, it has been
+2017-09-27 17:30:05, mandv55.png, z^10, shape that appears to have 9 degrees of rotaitonal symetry. not all of the pieces of blue are connected
+2017-09-27 17:33:49, mandv56.png, ln z, not iteresting. a single connected solid blue shape like a kidney bean translated int the positive real direction
+2017-09-27 17:36:51, mandv57.png, c*z*z, similar to the original mand set but rotated by pi/2 and mirrored in the real axis
+2017-09-27 17:39:15, mandv58.png, z^c, bean shaped block of blue with some back shapes inside it
+2017-09-27 17:54:36, mandv59.png, (c +z)^2, an interesting shape. worth investigatin
+2017-09-27 18:00:52, mandv60.png, (c + z)^2 at a higher resolution (40k x 40k), error createing image
+2017-09-27 20:20:43, manv61.png, same as above but lower res, appears to be an interesting fractal patern of waves
+2017-09-28 15:58:54, mandv62.png, same function as last but high resolution on a small section of it
+2017-09-28 16:06:04, mandv63.png, same as previous but at a possible resolution, too zoomed in to see anything
+2017-09-28 16:12:36, mandv64.png, continuation of above, attempting to get interesting image of (z +c)^2, error creating image
+2017-09-28 18:58:33, mandv65.png, same as before, too zomed in
+2017-09-28 19:02:13, mandv66.png, same as above, interesting. dose appear to be a wave like fractal pattern
+2017-09-29 10:53:03, juliav1.png, c = -1 + 0.1i, works well
+2017-09-29 10:58:17, juliav2.png, same as above but in black and white with higher resolution, error creating image
+2017-09-29 11:14:54, juliav3.png, same as above lower res, works well. restircted the range wrong
+2017-09-29 11:18:59, juliav4.png, same as before with colour corection enabled
+2017-09-29 11:21:54, juliav5.png, same as above but with col correct fixed, more change to col correct needed
+2017-09-29 11:26:40, juliav6.png, changed col correct to floor $ 256 (1- e^(-x/40), col correct now works well. It exadurates the difference between low numbers of iterations. unfortunatly this was deleted 
+
+2017-09-29 11:48:01, juliav6.png, same equation as before. new colour correction equation. colCorect2 x = x^2/255, not enough point in the range to make it look good
+
+2017-09-29 11:53:39, juliav7.png, julia set with c = 0.5 + 0.7i, all black
+2017-09-29 11:56:34, juliav8.png, c = 0.5 - 0.7i, all black
+2017-10-01 20:28:34, juliav9.png, c = 0.2 + 0.2i, solid blob in the middle. could be a fractal
+2017-10-01 20:30:51, juliav10.png, c = 0.2 -i, no areas require 255 iteration but there are strange "clould" like shapes forming. 
+2017-10-01 20:33:33, juliav11.png, c = 0.2 -i with colour correction 1 on , looks intersting appears to be some fractal like pattern inside it. col corect 1 may still not be functioning as intended as a large area has changed from black to green
+2017-10-04 20:59:35, juliav12.png, c = 0.1 + 0.1i, there is a ring around a shape
+2017-10-04 21:04:49, mandv67.png, (z+c)^3, much wider than is required but there appears to be a fractal within. 
+2017-10-04 21:09:32, mandv68.png, same as before but more zomed in and without colCorrect1 on, some what interesting
+2017-10-04 21:12:50, mandv69.png, c + z^(2 + 0.1i), there are somestrainge lines. the smalest value of the argument the magnitutde has been streched and the oposite is true for the largest value of the argument
+2017-10-04 21:30:30, mandv70.png, f(z) = c + z^(2 + 0.2i),   looks even stranger than the one before. for arguments betwen pi/2 and minus that it is recogniat it looks very strainge with some apparently straight lines
+2017-10-05 07:57:26, mandv71.png, set with the dimenions of my screen, too long to generate procedurally
+2017-11-02 15:58:05, manda_v1.png, first attempt at creating mandlerot set using scientiric data type
+2017-11-02 23:12:31, mandav1.png, small render using scientific data type, sucessful but comparativly very slow
+2017-11-02 23:17:10, mandav2.png, same as before but with up to 20 sf, didn't take much longer
+2017-11-02 23:19:28, mandav3.png, same as before but with much higher resolution (4000 x 4000)
+2017-11-02 23:44:02, mandav4.png, using the double data type to render the area around 0.25. will use this to compare with the scientific data type, looks as intended
+2017-11-02 23:46:27, mandav5.png, second part of the above. uses the scientific data type, no noticieable difference
+2017-11-03 00:10:27, mandv72.png, close up 0.25 using doubble, worked very well
+2017-11-03 01:00:00, mandv73.png, 20000x20000 from -0.5 + 0.5i to i, worked as intended and looks interesting
+2017-11-03 07:46:11, mandv74.png, A test to see if the reflection in the x axis has been fixed, it hasn't
+2017-11-03 07:49:14, mandv75.png, same as before, attempt 2, appears to have worked
+2017-11-03 07:55:11, mandv76.png, 20000x20000 on the area around 0.75, too higher up
+2017-11-03 08:07:18, mandv77.png, same as before but around 0.65, still to higher. just a black image
+2017-11-03 08:10:23, mandv78.png, same as abefore but at 0.55, still to higher
+2017-11-03 08:14:14, mandv79.png, same as before but i realized the error and have fixed it., looks interesting, worked as intended
+2017-11-03 08:29:18, mandv80.png, close up of -1.75, completely black? wrong peramiters maby?
+2017-11-03 08:34:58, mandv81.png, similar to before but centered on -1.3, completely black
+2017-11-03 08:37:29, mandv82.png, same as before centereed on -0.95, nothing. just black. something is probabbly wrong here
+2017-11-03 08:43:01, mandv83.png, whole thing, the fix for x reflection has had some adver effect where it is moved further up than it should be
+2017-11-03 13:47:25, mandv84.png, centered on 1.7 but only positive imaginary side, blank
+2017-11-03 13:54:26, mandv85.png, same as before but with fixed x axis (imaginar axis) reflection, still blank. probabbly still broken
+2017-11-03 13:56:38, mandv86.png, test to see if the x axis flip is working, it is not
+2017-11-03 13:58:23, mandv87.png, same as before, the set is still shifted down by 1
+2017-11-03 14:04:33, mandv88.png, trying to fix the above issue, works for a render that is symetrical in the real axis
+2017-11-03 14:07:04, mandv89.png, a render from -1 to i with res 1000x1000, works
+2017-11-03 14:08:55, mandv90.png, close up on -1.75 with 20000x20000 res, worked as intended it looks exactly like the regular mand but with a bit ataching it on real line
+2017-11-03 14:29:11, mandv91.png, simple render of the whole thing but should be more colourful, works but needs to multiply it by something to make it fulfill the whole 0-255 range
+2017-11-03 14:33:28, mandv92.png, should be more colourful and brighter now, works and it looks interesting
+2017-11-03 16:03:44, mandv93.png, same as before but with full colour. will probabbly take alot longe.. (by a factor of 255^2), mostly black not correct
+2017-11-03 19:00:01, mandv94.png, same as before but corrected code, works but requires a more zoomed in view to get anything out of it. it also took around an hour i think

@@ -1,0 +1,7 @@
+mand_txt
+*.
+ChangeLog.md
+dist/
+.cabal-sandbox
+*.png
+*.swp
