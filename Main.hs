@@ -210,7 +210,7 @@ generateSet = do
 
 
 
-f stepf srf sif realend x y = normal stepf srf sif realend x y
+f stepf srf sif realend x y = fullcolour stepf srf sif realend x y
   where 
     m = mand $ Left $ (srf + (fromIntegral x) * stepf) :+ (realend - ((fromIntegral y) * stepf))
     normal stepf srf sif realend x y = PixelRGB8 (fromIntegral 0)  (fromIntegral 0) (fromIntegral m)
@@ -278,13 +278,13 @@ sciMagnitude (a :+b) = a * a + b * b
 general :: RealFloat a => (Complex a -> Complex a -> Complex a) -> Complex a -> Int
 general g a 
 --  | ((realPart a) < 0.25) && ((realPart a) > (-0.5)) && (abs (imagPart a) < 0.5) = 255 takes 21 secods
-  | (imagPart a == 0) || ( let b = a + (1:+0) in realPart(b*(conjugate b)) < 0.05) ||((realPart a < 0) && ( realPart (a * (conjugate a))  < 0.4)) ||(realPart a < 0.25 && realPart a >= 0 && abs (imagPart a) < 0.5) = 255 -- takes 16 seconds 
+  | (imagPart a == 0) || ( let b = a + (1:+0) in realPart(b*(conjugate b)) < 0.05) ||((realPart a < 0) && ( realPart (a * (conjugate a))  < 0.4)) ||(realPart a < 0.25 && realPart a >= 0 && abs (imagPart a) < 0.5) =  16777216 -- takes 16 seconds 
   | otherwise = count_iterations 0 (0 :+ 0) a 
   where 
     p = polar a
     count_iterations n e x 
-      -- | n >= 16777216 = 16777216
-      | n >= 255  = 255
+      | n >= 16777216 = 16777216
+      -- | n >= 255  = 255
 --      | n >= 16581375 = 16581375 
       -- | (realPart x) < 0.1 && (realPart x) > -0.2 && abs (imagPart x) < 0.2 = 255 
       -- if using sci
