@@ -78,3 +78,6 @@ Log was started on the 2017-09-24 10:29:45 with mandv48
 2017-11-03 21:03:56, mandv103.png, added it back, works now. probabbly a issue with brackets
 2017-11-03 21:05:19, mandv104.png, testing to find max size of box, back to blank. aparently it isn't fixed
 2017-11-03 22:43:04, mandv104.png, full colour with optimisations will hopefully take less time, 43
+2017-11-03 23:15:44, mandv105.png, 1000 possible colours
+2017-11-03 23:17:10, mandv105.png, same thing again with 1000 colours, just a circle... something is wrong
+2017-11-03 23:20:24, mandv106.png, same as before but fixed circle error, works well
