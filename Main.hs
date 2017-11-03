@@ -44,8 +44,7 @@ main = do
 --(writeFile "test777" $ ',':(show . mand)) list
   --writeFile "test666" $ show $ map mand list
   --let mand_list = map mand list
-  writePng ("benchmark.png") $ generateImage (\x y -> f 0.0005 (-2) (2) (2) x y) 8000 8000
-distraction = do
+  --writePng ("benchmark.png") $ generateImage (\x y -> f 0.0005 (-2) (2) (2) x y) 8000 8000
   print $ cpow (0:+1) (0:+1)
   print "set for generating mandlebrot set, mov for the movement of the mandelbrot, grp for graphical, rang for range in a gif, sci for scientific use"
   whatdo <- getLine
@@ -278,9 +277,11 @@ sciMagnitude (a :+b) = a * a + b * b
 
 general :: RealFloat a => (Complex a -> Complex a -> Complex a) -> Complex a -> Int
 general g a 
-  -- | ((realPart a) < 0.24) && ((realPart a) > (-0.5)) && (abs (imagPart a) < 0.5) = 255
-  | otherwise =  count_iterations 0 (0 :+ 0) a 
+--  | ((realPart a) < 0.25) && ((realPart a) > (-0.5)) && (abs (imagPart a) < 0.5) = 255 takes 21 secods
+  | (imagPart a == 0) || ( let b = a + (1:+0) in realPart(b*(conjugate b)) < 0.05) ||((realPart a < 0) && ( realPart (a * (conjugate a))  < 0.4)) ||(realPart a < 0.25 && realPart a >= 0 && abs (imagPart a) < 0.5) = 255 -- takes 16 seconds 
+  | otherwise = count_iterations 0 (0 :+ 0) a 
   where 
+    p = polar a
     count_iterations n e x 
       -- | n >= 16777216 = 16777216
       | n >= 255  = 255
