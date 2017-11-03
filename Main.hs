@@ -214,8 +214,9 @@ f stepf srf sif realend x y = fullcolour stepf srf sif realend x y
   where 
     m = mand $ Left $ (srf + (fromIntegral x) * stepf) :+ (realend - ((fromIntegral y) * stepf))
     normal stepf srf sif realend x y = PixelRGB8 (fromIntegral 0)  (fromIntegral 0) (fromIntegral m)
-    fullcolour stepf srf sif realend x y = PixelRGB8 (fromIntegral $ 65023* (div m 65023)) (fromIntegral $ 65025 * (mod (div m 255) 65025)) $ 65025 * (fromIntegral $ mod m 255)
-
+    fullcolour stepf srf sif realend x y = PixelRGB8 (scale $ fromIntegral $ max * max * (div m max* max)) (scale $ fromIntegral $ max * max * (mod (div m max) max * max)) $ ( scale $ max * max * (fromIntegral $ mod m max))
+    max = 10
+    scale x = round $ 255 * ((fromIntegral x) / (fromIntegral max))
     --m :: Int
     --m = mand $ Right $ fromFloatDigits (srf + (fromIntegral x) * stepf) :+ fromFloatDigits (sif + (fromIntegral y) * stepf)
     --m = mand $ ( (read :: String -> Scientific) (show (srf + (fromIntegral x) * stepf)) :=  (read :: String -> Scientific) (show (sif+ (fromIntegral y) * stepf))
@@ -278,12 +279,12 @@ sciMagnitude (a :+b) = a * a + b * b
 general :: RealFloat a => (Complex a -> Complex a -> Complex a) -> Complex a -> Int
 general g a 
 --  | ((realPart a) < 0.25) && ((realPart a) > (-0.5)) && (abs (imagPart a) < 0.5) = 255 takes 21 secods
-  | (imagPart a == 0) || ( let b = a + (1:+0) in realPart(b*(conjugate b)) < 0.05) ||((realPart a < 0) && ( realPart (a * (conjugate a))  < 0.4)) ||(realPart a < 0.25 && realPart a >= 0 && abs (imagPart a) < 0.5) =  16777216 -- takes 16 seconds 
+  | (imagPart a == 0) || ( let b = a + (1:+0) in realPart(b*(conjugate b)) < 0.05) ||((realPart a < 0) && ( realPart (a * (conjugate a))  < 0.4)) ||(realPart a < 0.25 && realPart a >= 0 && abs (imagPart a) < 0.5) =  999 -- takes 16 seconds 
   | otherwise = count_iterations 0 (0 :+ 0) a 
   where 
     p = polar a
     count_iterations n e x 
-      | n >= 16777216 = 16777216
+      | n >= 999 = 999
       -- | n >= 255  = 255
 --      | n >= 16581375 = 16581375 
       -- | (realPart x) < 0.1 && (realPart x) > -0.2 && abs (imagPart x) < 0.2 = 255 
@@ -291,7 +292,7 @@ general g a
       -- | (sciMagnitude x ) > (makeSci "4" "0") = n
       -- | otherwise = count_iterations (n + 1) e  $ g a $ roundComplex x 
       -- if using float
-      | (realPart x)^2 + (imagPart x)^2 > 4 = n
+      | realPart (x * (conjugate x)) > 4 = n
       | otherwise = count_iterations (n +1) e $ g a x
 
 generalA :: (CS -> CS -> CS) -> CS -> Int
