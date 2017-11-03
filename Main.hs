@@ -60,12 +60,8 @@ main = do
 generateAccurateSet = print "yet again not finishe"
 
 tester = do
-  let a = scientific 1234567890123456789012345 (-4)
-  print a
-  print $ coefficient a
-  print $ base10Exponent a
-  print $ roundSci a 
-
+  writePng ("benchmark.png") $ generateImage (\x y -> f 0.0005 (-2) (2) (2) x y) 8000 8000
+--stepf srf sif realend x y
 generateSeriesOfSets = print "in complete"
 
 generateSciSet = do 
@@ -213,10 +209,10 @@ generateSet = do
 
 
 
-f stepf srf sif realend x y= PixelRGB8 (fromIntegral $ 65023* (div m 65023)) (fromIntegral $ 65025 * (mod (div m 255) 65025)) $ 65025 * (fromIntegral $ mod m 255)
+f stepf srf sif realend x y = normal stepf srf sif realend x y
   where 
     m = mand $ Left $ (srf + (fromIntegral x) * stepf) :+ (realend - ((fromIntegral y) * stepf))
-    normal stepf srf sif realend x y = PixelRGB8 0 0 m
+    normal stepf srf sif realend x y = PixelRGB8 (fromIntegral 0)  (fromIntegral 0) (fromIntegral m)
     fullcolour stepf srf sif realend x y = PixelRGB8 (fromIntegral $ 65023* (div m 65023)) (fromIntegral $ 65025 * (mod (div m 255) 65025)) $ 65025 * (fromIntegral $ mod m 255)
 
     --m :: Int
@@ -279,13 +275,15 @@ sciMagnitude :: Complex Scientific  -> Scientific
 sciMagnitude (a :+b) = a * a + b * b
 
 general :: RealFloat a => (Complex a -> Complex a -> Complex a) -> Complex a -> Int
-general g a = count_iterations 0 (0 :+ 0) a 
+general g a 
+  | ((realPart a) < 0.24) && ((realPart a) > (-0.5)) && (abs (imagPart a) < 0.5) = 255
+  | otherwise =  count_iterations 0 (0 :+ 0) a 
   where 
     count_iterations n e x 
       -- | n >= 16777216 = 16777216
       | n >= 255  = 255
-      | n >= 16581375 = 16581375 
-      | abs (realPart x) < 0.24 && abs (realPart x) > -0.5 && abs (imagPart x) > 0.5 = 12777216 
+--      | n >= 16581375 = 16581375 
+      -- | (realPart x) < 0.1 && (realPart x) > -0.2 && abs (imagPart x) < 0.2 = 255 
       -- if using sci
       -- | (sciMagnitude x ) > (makeSci "4" "0") = n
       -- | otherwise = count_iterations (n + 1) e  $ g a $ roundComplex x 
