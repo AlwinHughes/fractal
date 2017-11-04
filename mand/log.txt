@@ -81,3 +81,5 @@ Log was started on the 2017-09-24 10:29:45 with mandv48
 2017-11-03 23:15:44, mandv105.png, 1000 possible colours
 2017-11-03 23:17:10, mandv105.png, same thing again with 1000 colours, just a circle... something is wrong
 2017-11-03 23:20:24, mandv106.png, same as before but fixed circle error, works well
+
+2017-11-03 23:35:01, mandv107.png, 40k by 40k with 1000 colours,  n  failed ot load
