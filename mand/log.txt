@@ -83,3 +83,9 @@ Log was started on the 2017-09-24 10:29:45 with mandv48
 2017-11-03 23:20:24, mandv106.png, same as before but fixed circle error, works well
 
 2017-11-03 23:35:01, mandv107.png, 40k by 40k with 1000 colours,  n  failed ot load
+2017-11-04 13:02:31, mandv108.png, 1000 colours of full set with 4k by 4k, looks interesting. could be worth changin colour order so that it looks astetically better
+2017-11-04 13:09:16, mandv109.png, same as before but colours should now display correctly. at 8kx8k, works better. still not quite white or black at edges. fixing that 
+2017-11-04 13:13:48, mandv110.png, same as before should get proper whites and blacks now though, still not white...
+2017-11-04 13:17:01, mandv111.png, same as before but atchally compiled it this time..., still not completely white
+2017-11-04 13:20:56, mandv112.png, trying to fix whiteness issue, looks good but still now white in center
+2017-11-05 00:07:04, mandv113.png, 20kx20k of the area at 0.65i, worked well part from the colour issue
