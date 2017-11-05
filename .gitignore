@@ -4,3 +4,4 @@ ChangeLog.md
 .cabal-sandbox
 *.png
 *.swp
+cabal.sandbox.config
