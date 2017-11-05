@@ -287,7 +287,7 @@ general g a
   | otherwise = count_iterations 0 (0 :+ 0) a 
   where 
     count_iterations n e x 
-      | n == 1000 = 1000
+      | n == 1000 = 1000 
       -- | n >= 255  = 255
 --      | n >= 16581375 = 16581375 
       -- | (realPart x) < 0.1 && (realPart x) > -0.2 && abs (imagPart x) < 0.2 = 255 
