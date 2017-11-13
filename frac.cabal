@@ -50,8 +50,9 @@ executable frac
   -- .hs or .lhs file containing the Main module.
   main-is:             Main.hs
   
+  ghc-options: -threaded 
   -- Modules included in this executable, other than Main.
-  -- other-modules:       
+  other-modules: Graphical, Mand
   
   -- LANGUAGE extensions used by modules in this package.
   -- other-extensions:    
@@ -60,7 +61,7 @@ executable frac
   build-depends:       base >=4.10 && <4.11, split, scientific, JuicyPixels, time, X11
   
   -- Directories containing source files.
-  -- hs-source-dirs:      
+  hs-source-dirs:      source
   
   -- Base language which the package is written in.
   default-language:    Haskell2010

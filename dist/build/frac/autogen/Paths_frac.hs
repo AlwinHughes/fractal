@@ -29,12 +29,12 @@ version :: Version
 version = Version [0,1,0,0] []
 bindir, libdir, dynlibdir, datadir, libexecdir, sysconfdir :: FilePath
 
-bindir     = "/home/alwin/frac/.cabal-sandbox/bin"
-libdir     = "/home/alwin/frac/.cabal-sandbox/lib/x86_64-linux-ghc-8.2.1/frac-0.1.0.0-HiSAn5pI6MvEawvTJB0SMQ-frac"
-dynlibdir  = "/home/alwin/frac/.cabal-sandbox/lib/x86_64-linux-ghc-8.2.1"
-datadir    = "/home/alwin/frac/.cabal-sandbox/share/x86_64-linux-ghc-8.2.1/frac-0.1.0.0"
-libexecdir = "/home/alwin/frac/.cabal-sandbox/libexec/x86_64-linux-ghc-8.2.1/frac-0.1.0.0"
-sysconfdir = "/home/alwin/frac/.cabal-sandbox/etc"
+bindir     = "/home/alwin/.cabal/bin"
+libdir     = "/home/alwin/.cabal/lib/x86_64-linux-ghc-8.2.1/frac-0.1.0.0-HiSAn5pI6MvEawvTJB0SMQ-frac"
+dynlibdir  = "/home/alwin/.cabal/lib/x86_64-linux-ghc-8.2.1"
+datadir    = "/home/alwin/.cabal/share/x86_64-linux-ghc-8.2.1/frac-0.1.0.0"
+libexecdir = "/home/alwin/.cabal/libexec/x86_64-linux-ghc-8.2.1/frac-0.1.0.0"
+sysconfdir = "/home/alwin/.cabal/etc"
 
 getBinDir, getLibDir, getDynLibDir, getDataDir, getLibexecDir, getSysconfDir :: IO FilePath
 getBinDir = catchIO (getEnv "frac_bindir") (\_ -> return bindir)
