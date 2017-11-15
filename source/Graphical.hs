@@ -28,7 +28,7 @@ startGraphical mv = do
   --drawInWin dpy win "blue"
   col <- initColor dpy "red"
   --drawAPoint 400 400 dpy win col 
-  drawSet dpy win (-2) (-2) 500 500 0.008 mand_iteration 
+  drawSet dpy win (-1.5) (-0.05) 500 500 0.0002 mand_iteration 
 
   --drawRGBRec dpy win $ pixelFromRGB 150 200 25 
   --drawRGBRec dpy win $ pixelFromRGB 0 0 255
@@ -58,16 +58,34 @@ drawSet dpy win startRe startIm numberRe numberIm step nextIteration = do
       stuff gc (x, y) = do 
         let re = startRe + (fromIntegral x) * step 
         let im = startIm + (fromIntegral y) * step
-        let pixel = scaleInt (general nextIteration (re :+ im) 256) 256 
-        setForeground dpy gc pixel
+        let pixel = scaleIntToRGB (general nextIteration (re :+ im) 2197) 13 
+        setForeground dpy gc pixel 
         drawPoint dpy win gc (fromIntegral x) (fromIntegral y)
        
-
+--the peramiter max should be the third root of the maximum value that n can take
+--scaleIntToRGB n max = if n == max * max * max then 0 else pixelFromRGB c1 c2 c3
+scaleIntToRGB :: Int -> Int -> Word64
+scaleIntToRGB n max = pixelFromRGB c1 c2 c3
+  where
+    scale x = round $ 255 * ((fromIntegral x) / fromIntegral (max))
+    c1 = scale $ div n (max* max)
+    c2 = scale $ mod (div n max) (max * max)
+    c3 = scale $ mod n max
+    
+    
 
 
 scaleInt :: Int -> Int -> Word64
-scaleInt i max = fromIntegral . round $ ((fromIntegral i) / (fromIntegral max)) * 16777215
-       
+scaleInt i max = fromIntegral . round $ ((fromIntegral i) / (fromIntegral max)) * (16777215 / fromIntegral max)
+{-       
+scaleInt2 :: Int -> Int -> Word64 
+scaleInt2 i max 
+  | i < mrt = fromIntegral i
+  | i < mrt * 2 = fromIntegral 256 * i
+  | otherwise = fromIntegral 256 * 256 * i
+  where
+    mrt = max ** (1/3)
+-}
 drawInWin :: Display -> Window -> String -> IO ()
 drawInWin dpy win col = do
   fgcolour <- initColor dpy col 

@@ -46,11 +46,12 @@ sciMagnitude (a :+b) = a * a + b * b
 general :: RealFloat a => (Complex a -> Complex a -> Complex a) -> Complex a -> Int -> Int
 general g a max 
 --  | ((realPart a) < 0.25) && ((realPart a) > (-0.5)) && (abs (imagPart a) < 0.5) = 255 takes 21 secods
-  | (imagPart a == 0 && realPart a < 0.25 && realPart a > -2) || ( let b = a + (1:+0) in realPart(b*(conjugate b)) < 0.05) ||((realPart a < 0) && ( realPart (a * (conjugate a))  < 0.4)) ||(realPart a < 0.25 && realPart a >= 0 && abs (imagPart a) < 0.5) =  max -1 -- takes 16 seconds 
+-- removed real check: (imagPart a == 0 && realPart a < 0.25 && realPart a > -2) || 
+  | ( let b = a + (1:+0) in realPart(b*(conjugate b)) < 0.05) ||((realPart a < 0) && ( realPart (a * (conjugate a))  < 0.4)) ||(realPart a < 0.25 && realPart a >= 0 && abs (imagPart a) < 0.5) =  max -1  -- takes 16 seconds 
   | otherwise = count_iterations 0 (0 :+ 0) a 
   where 
     count_iterations n e x 
-      | n == max = max -1 
+      | n == max = max -1
       -- | n >= 255  = 255
 --      | n >= 16581375 = 16581375 
       -- | (realPart x) < 0.1 && (realPart x) > -0.2 && abs (imagPart x) < 0.2 = 255 
