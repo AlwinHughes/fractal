@@ -8,6 +8,8 @@ import Data.Word
 import Data.Scientific as Scientific
 import Data.Complex
 
+--with colour depth at 5000 zzcos iteration takes 1:45 to complete
+
 import Mand
 
 startGraphical :: MVar Bool -> IO ()
@@ -18,25 +20,37 @@ startGraphical mv = do
   let scr = defaultScreenOfDisplay dpy
   let background = whitePixel dpy dflt
   let border = blackPixel dpy dflt
+  let max = 5000
   rootw <- rootWindow dpy dflt
-  --win  <- createSimpleWindow dpy rootw 0 0 100 100 1 border background 
-  win <- mkUnmanagedWindow dpy scr rootw 0 0 500 500 
+  win  <- createSimpleWindow dpy rootw 0 0 600 600 1 border background 
+  --win <- mkUnmanagedWindow dpy scr rootw 0 0 500 500 
   setTextProperty dpy win "this will not be seen" wM_NAME
   mapWindow dpy win
+  --drawKey dpy win max
   --drawManyInWin 10 10 50 ["green","yellow", "blue","black"] dpy win 0 0 
   --callNTime 50 10 10 ["green","yellow", "blue","black"] (drawManyInWin 10 10 10 dpy win)
   --drawInWin dpy win "blue"
   col <- initColor dpy "red"
   --drawAPoint 400 400 dpy win col 
-  drawSet dpy win (-1.5) (-0.05) 500 500 0.0002 mand_iteration 
-
+  drawSet dpy win (-4) (-4) 500 500 0.016 zzcos_iteration max
+  
+  --drawSet dpy win (-1.4) (-0.005) 500 500 0.00002 mand_iteration 
+  --mapM_ (printAllCol dpy win) [(x,y) | x <- [0..255], y <- [0..255]]
   --drawRGBRec dpy win $ pixelFromRGB 150 200 25 
   --drawRGBRec dpy win $ pixelFromRGB 0 0 255
+  --allocaXEvent (eventThing dpy win)
+  print $ scaleUpToPixel 255 255 
   sync dpy False
   return ()
   --threadDelay (10 * 1000000)
   --exitWith ExitSuccess
   
+printAllCol :: Display -> Window -> (Int, Int) -> IO ()
+printAllCol dpy win (x, y) = drawAPoint x y dpy win $ scaleUpToPixel (256*255 + 255) $ 256 * x + y 
+
+scaleUpToPixel :: Int -> Int -> Word64
+scaleUpToPixel max n = floor $ (256*256*256 -1) * ((fromIntegral n) / (fromIntegral max))
+
 mkUnmanagedWindow :: Display -> Screen -> Window -> Position -> Position -> Dimension -> Dimension -> IO Window
 mkUnmanagedWindow dpy scr rw x y w h = do
  let visual = defaultVisualOfScreen scr
@@ -48,20 +62,34 @@ mkUnmanagedWindow dpy scr rw x y w h = do
      createWindow dpy rw x y w h 1 (defaultDepthOfScreen scr) inputOutput visual attrmask attributes
  return win
 
-drawSet :: RealFloat a => Display -> Window -> a -> a -> Int -> Int -> a -> (Complex a -> Complex a -> Complex a) -> IO ()
-drawSet dpy win startRe startIm numberRe numberIm step nextIteration = do 
+drawSet :: RealFloat a => Display -> Window -> a -> a -> Int -> Int -> a -> (Complex a -> Complex a -> Complex a) -> Int ->IO ()
+drawSet dpy win startRe startIm numberRe numberIm step nextIteration max = do 
   gc <- createGC dpy win
-  mapM_ (stuff gc ) [(x,y) | x <- [0..(numberRe-1)] , y <- [0..(numberIm -1)] ] 
+  mapM_ (stuff gc) [(x,y) | x <- [0..(numberRe-1)] , y <- [0..(numberIm -1)] ] 
   freeGC dpy gc
     where
       --stuff ::  -> (Int, Int) -> IO ()
       stuff gc (x, y) = do 
         let re = startRe + (fromIntegral x) * step 
         let im = startIm + (fromIntegral y) * step
-        let pixel = scaleIntToRGB (general nextIteration (re :+ im) 2197) 13 
-        setForeground dpy gc pixel 
+        --let pixel = scaleIntToRGB (general nextIteration (re :+ im) 1000) 10 
+        let pixel = scaleUpToPixel (max -1) $ general nextIteration (Just zzcosMask) (re :+ im) max 
+        setForeground dpy gc (pixel)
         drawPoint dpy win gc (fromIntegral x) (fromIntegral y)
-       
+
+drawKey :: Display -> Window -> Int -> IO ()
+drawKey dpy win max = do
+  gc <- createGC dpy win
+  mapM_ (f gc) [0..500] 
+  freeGC dpy gc
+  where 
+    f gc p = do
+      drawRGBRec' dpy win  (scaleUpToPixel max $ round (fromInteger p * ((fromIntegral max) / 500))) 200 200 200 200
+
+      setForeground dpy gc $ scaleUpToPixel max $ round (fromInteger p * ((fromIntegral max) / 500))
+      fillRectangle dpy win gc 510 (fromIntegral p) 20 1 
+      print $ scaleUpToPixel max $ round (fromInteger p * ((fromIntegral max) / 500))
+
 --the peramiter max should be the third root of the maximum value that n can take
 --scaleIntToRGB n max = if n == max * max * max then 0 else pixelFromRGB c1 c2 c3
 scaleIntToRGB :: Int -> Int -> Word64
@@ -73,7 +101,8 @@ scaleIntToRGB n max = pixelFromRGB c1 c2 c3
     c3 = scale $ mod n max
     
     
-
+scaleIntToWord :: Int -> Int -> Word64
+scaleIntToWord max i = floor $ 16777215 * fromIntegral i / fromIntegral max
 
 scaleInt :: Int -> Int -> Word64
 scaleInt i max = fromIntegral . round $ ((fromIntegral i) / (fromIntegral max)) * (16777215 / fromIntegral max)
@@ -105,8 +134,16 @@ drawRGBRec :: Display -> Window -> Graphics.X11.Xlib.Pixel -> IO ()
 drawRGBRec dpy win pixel = do
   gc <- createGC dpy win
   setForeground dpy gc pixel
-  fillRectangle dpy win gc 100 100 100 100 
+  fillRectangle dpy win gc 100 100 200 300
   freeGC dpy gc
+
+drawRGBRec' :: Display -> Window -> Graphics.X11.Xlib.Pixel -> Int -> Int -> Int -> Int -> IO ()
+drawRGBRec' dpy win pixel x y width height= do
+  gc <- createGC dpy win
+  setForeground dpy gc pixel
+  fillRectangle dpy win gc (fromIntegral x) (fromIntegral y)  (fromIntegral width) (fromIntegral height)
+  freeGC dpy gc
+
 
 drawManyInWin :: Int -> Int -> Int -> Display -> Window -> Int -> Int -> [String] -> IO ()
 drawManyInWin width height number dpy win x y (c:cols)= do
@@ -138,7 +175,7 @@ wordToBinary = work 63
       | n >= 0 = if(word `div` (2 ^ n) > 0) then True:(work (word - (2^n)) (n-1)) else False:(work word (n-1))
       | otherwise = []
 
-pixelFromRGB :: Word8 -> Word8 -> Word8 -> Graphics.X11.Xlib.Pixel 
+pixelFromRGB :: Word8 -> Word8 -> Word8 -> Word64 
 pixelFromRGB r g b = ((shiftL ((shiftL (zeroBits .|. toWord64 r ) 8 ).|. toWord64 g) 8) .|. toWord64 b) 
   where 
     toWord64 :: Word8 -> Word64

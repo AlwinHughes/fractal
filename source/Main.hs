@@ -1,4 +1,5 @@
 module Main where
+import Data.Word
 import Data.List.Split
 import Data.Scientific as Scientific
 import Data.Complex
@@ -179,17 +180,23 @@ generateSet mv = do
 
 
 
-f stepf srf sif realend x y = normal stepf srf sif realend x y
+f stepf srf sif realend x y = fullcolour stepf srf sif realend x y
   where 
-    m = mand  (Left $ (srf + (fromIntegral x) * stepf) :+ (realend - ((fromIntegral y) * stepf))) 255
+    m = general cubed_iteration (Just zzcosMask) ((srf + (fromIntegral x) * stepf) :+ (realend - ((fromIntegral y) * stepf))) 5000 
     normal stepf srf sif realend x y = PixelRGB8 (fromIntegral 0)  (fromIntegral 0) (fromIntegral m)
     fullcolour stepf srf sif realend x y = PixelRGB8 p1 p2 p3
     max = 10
     scale x = round $ 255 * ((fromIntegral x) / (fromIntegral (max * max * max -1)))
-    p1 = scale $ fromIntegral $ max * max * (div m max* max)
-    p2 = scale $ fromIntegral $ max * max * (mod (div m max) max * max)
-    p3 = scale $ max * max * (fromIntegral $ mod m max)
+    --p1 = scale $ fromIntegral $ max * max * (div m max* max)
+    --p2 = scale $ fromIntegral $ max * max * (mod (div m max) max * max)
+    --p3 = scale $ max * max * (fromIntegral $ mod m max)
+    p1 = fromIntegral $ div (scaleUp 5000 m) 65536
+    p2 = fromIntegral $ mod (div (scaleUp 5000 m) 255) 256 
+    p3 = fromIntegral $ mod (scaleUp 5000 m) 255 
 
+
+scaleUp :: Integral a => a -> a -> a 
+scaleUp max i = round $ 16777215 * fromIntegral i / fromIntegral max
     --m :: Int
     --m = mand $ Right $ fromFloatDigits (srf + (fromIntegral x) * stepf) :+ fromFloatDigits (sif + (fromIntegral y) * stepf)
     --m = mand $ ( (read :: String -> Scientific) (show (srf + (fromIntegral x) * stepf)) :=  (read :: String -> Scientific) (show (sif+ (fromIntegral y) * stepf))

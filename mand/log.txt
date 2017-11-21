@@ -89,3 +89,8 @@ Log was started on the 2017-09-24 10:29:45 with mandv48
 2017-11-04 13:17:01, mandv111.png, same as before but atchally compiled it this time..., still not completely white
 2017-11-04 13:20:56, mandv112.png, trying to fix whiteness issue, looks good but still now white in center
 2017-11-05 00:07:04, mandv113.png, 20kx20k of the area at 0.65i, worked well part from the colour issue
+2017-11-18 17:45:09, mandv114.png, tes of simulatious tthings happening, worked but didn't seem to use more system resources
+2017-11-18 17:56:11, mandv115.png, more of the above test, nothing interesting. conky does not report that any more than 25% c is being used
+2017-11-18 18:32:06, mandv115.png, set has equation z = c + z*z*(sin z) looked awsome when rendered using graphical, works but the colour is still not quite wright
+2017-11-19 02:25:59, mandv116.png, 20k by 20k of z = c + z*z*(cos z) with colour depth of 5k. (an overnight job)
+2017-11-21 00:57:10, mandv117.png, same as above but with a mask applied reducing the time between a factor of 3 or 4. previous attempt didn't comlete, worked brilliantly and looks awsome

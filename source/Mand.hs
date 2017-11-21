@@ -16,8 +16,20 @@ csqrt x = (m * cos (t) :+ m * sin(t))
     m = sqrt $ fst p
     t = (snd p)/2
 
+--cubed_iteration c z  = c + z * cos (z ** z) 
+cubed_iteration :: RealFloat a => Complex a -> Complex a -> Complex a 
+cubed_iteration c z = c + z * z * z
+
+
+zzcosMask :: RealFloat a => Complex a -> Bool
+zzcosMask (x :+y) = ((x > -0.95 && x < 0.1) && (y < 0.47 && y > -0.47)) || (( x <= -0.95 && x > -1.25) && (abs y < 0.42)) || (abs y < 0.2 && x <= -1.25 && x > -1.45) || (abs y < 0.4 && x >= 0.1 && x < 0.2) || (abs y < 0.17 && (x > 0.6 && x < 0.78)) || (abs y < 0.11 && x > 0.4 && x <= 0.85)
+
+zzcos_iteration :: RealFloat a => Complex a -> Complex a -> Complex a 
+zzcos_iteration c z = c + z * z * (cos z)
+
 mand_iteration :: RealFloat a => Complex a -> Complex a -> Complex a 
 mand_iteration c z  = c + z*z 
+
 mand_iterationA :: CS -> CS -> CS 
 mand_iterationA (c:+b) (z:+x)  = (c + z*z - x* x) :+ (b + 2*z*x) 
 
@@ -37,28 +49,32 @@ cpow :: RealFloat a => Complex a -> Complex a -> Complex a
 cpow x y = cexp $ y * log  x 
   
 mand :: (RealFloat a) => Either (Complex a) CS -> Int -> Int
-mand (Left c) max = general mand_iteration c max
+mand (Left c) max = general mand_iteration (Just mandSive) c max
 mand (Right c) _ = generalA mand_iterationA c
 
 sciMagnitude :: Complex Scientific  -> Scientific
 sciMagnitude (a :+b) = a * a + b * b
 
-general :: RealFloat a => (Complex a -> Complex a -> Complex a) -> Complex a -> Int -> Int
-general g a max 
+mandSive :: RealFloat a => Complex a -> Bool
+mandSive c@(x:+y) = ( let b = c + (1:+0) in realPart(b*(conjugate b)) < 0.05) ||((x < 0) && ( realPart (c * (conjugate c))  < 0.4)) ||(x < 0.25 && x  >= 0 && abs y  < 0.5)  -- takes 16 seconds 
+
+--( let b = a + (1:+0) in realPart(b*(conjugate b)) < 0.05) ||((realPart a < 0) && ( realPart (a * (conjugate a))  < 0.4)) ||(realPart a < 0.25 && realPart a >= 0 && abs (imagPart a) < 0.5) =  max -1  -- takes 16 seconds 
+
+general :: RealFloat a => (Complex a -> Complex a -> Complex a) -> Maybe (Complex a -> Bool)  -> Complex a -> Int -> Int
+general g Nothing a max = count_iterations 0 (0 :+ 0) a
+  where 
+    count_iterations n e x 
+      | n == max = max -1
+      | realPart (x * (conjugate x)) > 4 = n
+      | otherwise = count_iterations (n +1) e $ g a x
+general g (Just sive) a max 
 --  | ((realPart a) < 0.25) && ((realPart a) > (-0.5)) && (abs (imagPart a) < 0.5) = 255 takes 21 secods
 -- removed real check: (imagPart a == 0 && realPart a < 0.25 && realPart a > -2) || 
-  | ( let b = a + (1:+0) in realPart(b*(conjugate b)) < 0.05) ||((realPart a < 0) && ( realPart (a * (conjugate a))  < 0.4)) ||(realPart a < 0.25 && realPart a >= 0 && abs (imagPart a) < 0.5) =  max -1  -- takes 16 seconds 
+  | sive a = max - 1 
   | otherwise = count_iterations 0 (0 :+ 0) a 
   where 
     count_iterations n e x 
       | n == max = max -1
-      -- | n >= 255  = 255
---      | n >= 16581375 = 16581375 
-      -- | (realPart x) < 0.1 && (realPart x) > -0.2 && abs (imagPart x) < 0.2 = 255 
-      -- if using sci
-      -- | (sciMagnitude x ) > (makeSci "4" "0") = n
-      -- | otherwise = count_iterations (n + 1) e  $ g a $ roundComplex x 
-      -- if using float
       | realPart (x * (conjugate x)) > 4 = n
       | otherwise = count_iterations (n +1) e $ g a x
 
