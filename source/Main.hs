@@ -12,6 +12,7 @@ import Graphics.X11.Xlib
 import System.Exit (exitWith, ExitCode(..))
 import Control.Concurrent 
 import Data.Bits
+import GHC.Conc (numCapabilities)
 
 import Graphical
 import Mand
@@ -36,11 +37,16 @@ import Mand
 main :: IO ()
 main = do 
   taking_input <- newMVar True  
+  --writePng ("benchmark.png") $ generateImage (\x y -> f 0.0005 (-2) (2) (2) x y) 8000 8000
+  --print $ "num of cores: " ++ show numCapabilities
   forever $ loop taking_input
 
+
 loop taking_input = do
+  --print $ head $ reverse $ general_list_R mand_iterationA ((scientific 24 (-2)) :+ scientific 2 (-1))
+  --print $ head $ reverse $ general_list_D mand_iteration (0.24 :+ (0.2))
+
   --writePng ("benchmark.png") $ generateImage (\x y -> f 0.0005 (-2) (2) (2) x y) 8000 8000
-  --print $ cpow (0:+1) (0:+1)
   input <- promptForImput taking_input "set for generating mandlebrot set, mov for the movement of the mandelbrot, grp for graphical, rang for range in a gif, sci for scientific use"
   case input of
     "set" -> generateSet taking_input 
@@ -180,9 +186,9 @@ generateSet mv = do
 
 
 
-f stepf srf sif realend x y = fullcolour stepf srf sif realend x y
+f stepf srf sif realend x y = normal stepf srf sif realend x y
   where 
-    m = general cubed_iteration (Just zzcosMask) ((srf + (fromIntegral x) * stepf) :+ (realend - ((fromIntegral y) * stepf))) 5000 
+    m = general mand_iteration Nothing ((srf + (fromIntegral x) * stepf) :+ (realend - ((fromIntegral y) * stepf))) 255 
     normal stepf srf sif realend x y = PixelRGB8 (fromIntegral 0)  (fromIntegral 0) (fromIntegral m)
     fullcolour stepf srf sif realend x y = PixelRGB8 p1 p2 p3
     max = 10

@@ -1,5 +1,6 @@
 module Graphical where
 
+import Control.Monad
 import Graphics.X11.Xlib
 import System.Exit (exitWith, ExitCode(..))
 import Control.Concurrent 
@@ -7,6 +8,7 @@ import Data.Bits
 import Data.Word
 import Data.Scientific as Scientific
 import Data.Complex
+import GHC.Conc (numCapabilities)
 
 --with colour depth at 5000 zzcos iteration takes 1:45 to complete
 
@@ -32,14 +34,13 @@ startGraphical mv = do
   --drawInWin dpy win "blue"
   col <- initColor dpy "red"
   --drawAPoint 400 400 dpy win col 
-  drawSet dpy win (-4) (-4) 500 500 0.016 zzcos_iteration max
+  drawSetParalell dpy win (-2) (-2) 500 500 0.008 zzcos_iteration max
   
   --drawSet dpy win (-1.4) (-0.005) 500 500 0.00002 mand_iteration 
   --mapM_ (printAllCol dpy win) [(x,y) | x <- [0..255], y <- [0..255]]
   --drawRGBRec dpy win $ pixelFromRGB 150 200 25 
   --drawRGBRec dpy win $ pixelFromRGB 0 0 255
   --allocaXEvent (eventThing dpy win)
-  print $ scaleUpToPixel 255 255 
   sync dpy False
   return ()
   --threadDelay (10 * 1000000)
@@ -62,6 +63,7 @@ mkUnmanagedWindow dpy scr rw x y w h = do
      createWindow dpy rw x y w h 1 (defaultDepthOfScreen scr) inputOutput visual attrmask attributes
  return win
 
+-- 0:30
 drawSet :: RealFloat a => Display -> Window -> a -> a -> Int -> Int -> a -> (Complex a -> Complex a -> Complex a) -> Int ->IO ()
 drawSet dpy win startRe startIm numberRe numberIm step nextIteration max = do 
   gc <- createGC dpy win
@@ -74,9 +76,47 @@ drawSet dpy win startRe startIm numberRe numberIm step nextIteration max = do
         let im = startIm + (fromIntegral y) * step
         --let pixel = scaleIntToRGB (general nextIteration (re :+ im) 1000) 10 
         let pixel = scaleUpToPixel (max -1) $ general nextIteration (Just zzcosMask) (re :+ im) max 
-        setForeground dpy gc (pixel)
+        setForeground dpy gc pixel
         drawPoint dpy win gc (fromIntegral x) (fromIntegral y)
 
+-- 1:31
+drawSetParalell :: RealFloat a => Display -> Window -> a -> a -> Int -> Int -> a -> (Complex a -> Complex a -> Complex a) -> Int ->IO ()
+drawSetParalell dpy win startRe startIm numberRe numberIm step nextIteration max = do
+  gc <- createGC dpy win
+  
+  case numCapabilities of
+    1 -> drawSet dpy win startRe startIm numberRe numberIm step nextIteration max
+    otherwise -> do
+      re <- newEmptyMVar 
+      gc <- createGC dpy win
+      t1 <- forkIO $ processingThread re dpy win gc startIm step nextIteration max
+      t2 <- forkIO $ processingThread re dpy win gc startIm step nextIteration max
+      mapM_ (\x  -> do 
+        putMVar re $ (startRe + (fromIntegral x) * step, x)
+        ) [0..499]
+      killThread t1
+      killThread t2
+      freeGC dpy gc
+
+processingThread :: RealFloat a => MVar (a, Int) -> Display -> Window -> GC -> a -> a -> (Complex a -> Complex a -> Complex a) -> Int -> IO ()
+processingThread new_real dpy win _ im_start step nextIteration max =
+  forever ( do
+    (re,x)  <- takeMVar new_real
+    gc <- createGC dpy win 
+    drawLineOfPoints dpy win gc x 0 $ calcuateLine re im_start step nextIteration max)
+  
+
+calcuateLine :: RealFloat a => a -> a -> a -> (Complex a -> Complex a -> Complex a) -> Int -> [Word64]
+calcuateLine re im_start step nextIteration max = 
+  map (\ x -> scaleUpToPixel (max-1)  $ general nextIteration Nothing (re :+ (im_start + (fromIntegral x) * step)) max) [0..(max -1)] 
+
+drawLineOfPoints :: Display -> Window -> GC -> Int -> Int -> [Word64] -> IO ()
+drawLineOfPoints dpy win gc x y [] = return ()
+drawLineOfPoints dpy win gc x y (a:as) = do
+  setForeground dpy gc a
+  drawPoint dpy win gc (fromIntegral x) (fromIntegral y) 
+  drawLineOfPoints dpy win gc x (y + 1) as
+      
 drawKey :: Display -> Window -> Int -> IO ()
 drawKey dpy win max = do
   gc <- createGC dpy win

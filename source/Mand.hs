@@ -20,6 +20,8 @@ csqrt x = (m * cos (t) :+ m * sin(t))
 cubed_iteration :: RealFloat a => Complex a -> Complex a -> Complex a 
 cubed_iteration c z = c + z * z * z
 
+new_iteration :: RealFloat a => Complex a -> Complex a -> Complex a -> Complex a 
+new_iteration c n_z o_z = c + n_z * o_z 
 
 zzcosMask :: RealFloat a => Complex a -> Bool
 zzcosMask (x :+y) = ((x > -0.95 && x < 0.1) && (y < 0.47 && y > -0.47)) || (( x <= -0.95 && x > -1.25) && (abs y < 0.42)) || (abs y < 0.2 && x <= -1.25 && x > -1.45) || (abs y < 0.4 && x >= 0.1 && x < 0.2) || (abs y < 0.17 && (x > 0.6 && x < 0.78)) || (abs y < 0.11 && x > 0.4 && x <= 0.85)
@@ -32,7 +34,6 @@ mand_iteration c z  = c + z*z
 
 mand_iterationA :: CS -> CS -> CS 
 mand_iterationA (c:+b) (z:+x)  = (c + z*z - x* x) :+ (b + 2*z*x) 
-
 
 cexp :: Floating a => Complex a -> Complex a
 cexp (a :+ b) = (s * cos b :+ s * sin b)
@@ -92,30 +93,40 @@ generalA g a = count_iterations 0 (0 :+ 0) a
       | otherwise = count_iterations (n +1) e $ g a $ roundComplex x
 
 general_list_R ::  (Complex Scientific -> Complex Scientific -> Complex Scientific) -> Complex Scientific -> [Complex Scientific]
-general_list_R g a = get_list 0 a (0 :+ 0) g
+general_list_R g a = get_list 0 a (0 :+ 0)
   where
-    get_list 40 _ _ _ = []
-    get_list n (c :+d) (e :+ f) g 
+    get_list 1000 _ _  = []
+    get_list n (c :+d) (e :+ f)  
       | (sciMagnitude (e :+ f)) > (scientific 2 0) = []
-      | otherwise = (e:+f):  (get_list (n +1) (c :+d) ( g (c :+ d) (roundComplex (e :+ f))) g) 
+      | otherwise = (e:+f):  (get_list (n +1) (c :+d) ( g (c :+ d) (roundComplex (e :+ f)))) 
+-- takes 1:13 to do 1000 iterations using roundComplex
 
 general_list ::  (Complex Scientific -> Complex Scientific -> Complex Scientific) -> Complex Scientific -> [Complex Scientific]
-general_list g (a :+ b) = get_list 0  (a :+ b) (0 :+ 0) g
+general_list g (a :+ b) = get_list 0  (a :+ b) (0 :+ 0)
   where
-    get_list 40  _ _ _ = []
-    get_list n (c :+d) (e :+ f) g 
+    get_list 40  _ _  = []
+    get_list n (c :+d) (e :+ f) 
       | (sciMagnitude (e :+ f)) > (makeSci "2" "2") = []
-      | otherwise = (e:+f):  (get_list (n +1) (c :+d) ( g (c :+ d) (e :+ f)) g) 
+      | otherwise = (e:+f):  (get_list (n +1) (c :+d) ( g (c :+ d) (e :+ f))) 
 
-roundTo1000 :: Scientific -> Scientific
-roundTo1000 s = makeSci (getSign:cut) getExp
+general_list_D :: RealFloat a => (Complex a -> Complex a -> Complex a) -> Complex a -> [Complex a]
+general_list_D g x = getlist 0 x (0 :+ 0)
+  where
+    getlist 1000 _ _ = []
+    getlist n c z 
+      | realPart (z * conjugate z)> 4 = []
+      | otherwise = z: (getlist (n +1) c (g c z)) 
+
+roundSci' :: Scientific -> Scientific 
+roundSci' s = makeSci (getSign:cut) getExp
   where 
     num = splitOn "e" $ show s
     removeSign = if s < 0 then tail (num !! 0) else (num !! 0)
     getSign = if s < 0 then '-'  else ' '
     getExp = if (length num) == 1 then "0" else num !! 1
-    cut = take 20 removeSign
+    cut = take 100  removeSign
 
+--rounds t 20 dp
 roundSci :: Scientific -> Scientific 
 roundSci s 
   | d <  0  = s
@@ -130,4 +141,4 @@ digitCount = go 1 . abs
 --(fromInteger $ round $ f * (10^n)) / (10.0^^n)
 --Integer 
 roundComplex :: Complex Scientific -> Complex Scientific
-roundComplex (a :+ b) = (roundSci a :+ roundSci b)
+roundComplex (a :+ b) = (roundSci' a :+ roundSci' b)
