@@ -77,6 +77,28 @@
   (major1) == 1 && (major2) == 8 && (minor) <= 0)
 #endif /* MIN_VERSION_X11 */
 
+/* package strict-concurrency-0.2.4.2 */
+#ifndef VERSION_strict_concurrency
+#define VERSION_strict_concurrency "0.2.4.2"
+#endif /* VERSION_strict_concurrency */
+#ifndef MIN_VERSION_strict_concurrency
+#define MIN_VERSION_strict_concurrency(major1,major2,minor) (\
+  (major1) <  0 || \
+  (major1) == 0 && (major2) <  2 || \
+  (major1) == 0 && (major2) == 2 && (minor) <= 4)
+#endif /* MIN_VERSION_strict_concurrency */
+
+/* package deepseq-1.4.3.0 */
+#ifndef VERSION_deepseq
+#define VERSION_deepseq "1.4.3.0"
+#endif /* VERSION_deepseq */
+#ifndef MIN_VERSION_deepseq
+#define MIN_VERSION_deepseq(major1,major2,minor) (\
+  (major1) <  1 || \
+  (major1) == 1 && (major2) <  4 || \
+  (major1) == 1 && (major2) == 4 && (minor) <= 3)
+#endif /* MIN_VERSION_deepseq */
+
 /* tool alex-3.2.3 */
 #ifndef TOOL_VERSION_alex
 #define TOOL_VERSION_alex "3.2.3"

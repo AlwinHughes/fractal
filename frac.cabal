@@ -58,7 +58,7 @@ executable frac
   -- other-extensions:    
   
   -- Other library packages from which modules are imported.
-  build-depends:       base >=4.10 && <4.11, split, scientific, JuicyPixels, time, X11
+  build-depends:       base >=4.10 && <4.11, split, scientific, JuicyPixels, time, X11, strict-concurrency, deepseq
   
   -- Directories containing source files.
   hs-source-dirs:      source
