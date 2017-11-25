@@ -16,7 +16,10 @@ import GHC.Generics (Generic)
 import Control.DeepSeq
 import Mand
 
-data Stuff a = Stuff [Word64] 
+data Ret a = Ret [Word64] Int 
+  deriving (Eq, Generic, NFData)
+
+data Ven a = Ven a Int 
   deriving (Eq, Generic, NFData)
 
 startGraphical :: MVar Bool -> IO ()
@@ -39,7 +42,7 @@ startGraphical mv = do
   --drawInWin dpy win "blue"
   col <- initColor dpy "red"
   --drawAPoint 400 400 dpy win col 
-  drawSetParalell dpy win (-2) (-2) 500 500 0.008 zzcos_iteration max
+  drawSetParalell dpy win (-2 :: Double) (-2 :: Double) 500 500 0.008 zzcos_iteration max
   
   --drawSet dpy win (-1.4) (-0.005) 500 500 0.00002 mand_iteration 
   --mapM_ (printAllCol dpy win) [(x,y) | x <- [0..255], y <- [0..255]]
@@ -68,7 +71,10 @@ mkUnmanagedWindow dpy scr rw x y w h = do
      createWindow dpy rw x y w h 1 (defaultDepthOfScreen scr) inputOutput visual attrmask attributes
  return win
 
--- 0:30
+-- without mask:
+-- took 1:51 to draw set 
+-- with mask: 
+-- took 0:31
 drawSet :: RealFloat a => Display -> Window -> a -> a -> Int -> Int -> a -> (Complex a -> Complex a -> Complex a) -> Int ->IO ()
 drawSet dpy win startRe startIm numberRe numberIm step nextIteration max = do 
   gc <- createGC dpy win
@@ -80,14 +86,21 @@ drawSet dpy win startRe startIm numberRe numberIm step nextIteration max = do
         let re = startRe + (fromIntegral x) * step 
         let im = startIm + (fromIntegral y) * step
         --let pixel = scaleIntToRGB (general nextIteration (re :+ im) 1000) 10 
-        let pixel = scaleUpToPixel (max -1) $ general nextIteration Nothing (re :+ im) max 
+        let pixel = scaleUpToPixel (max -1) $ general nextIteration (Just zzcosMask) (re :+ im) max 
         setForeground dpy gc pixel
         drawPoint dpy win gc (fromIntegral x) (fromIntegral y)
 
-drawSetParalell :: RealFloat a => Display -> Window -> a -> a -> Int -> Int -> a -> (Complex a -> Complex a -> Complex a) -> Int ->IO ()
+--without mask:
+--took 56 seconds with 2 processing threads
+--took 55 with 3 processing threads
+--took 57 with 4 processing threads
+--with mask
+--took 17 with 2
+--took 18 with 3
+--took 30 with 4 
+drawSetParalell ::(NFData a, RealFloat a) => Display -> Window -> a -> a -> Int -> Int -> a -> (Complex a -> Complex a -> Complex a) -> Int ->IO ()
 drawSetParalell dpy win startRe startIm numberRe numberIm step nextIteration max = do
   gc <- createGC dpy win
-  
   case numCapabilities of
     1 -> drawSet dpy win startRe startIm numberRe numberIm step nextIteration max
     otherwise -> do
@@ -98,27 +111,31 @@ drawSetParalell dpy win startRe startIm numberRe numberIm step nextIteration max
       gc <- createGC dpy win
       t1 <- forkIO $ processingThread vendor ret startIm step nextIteration max numberIm "1"
       t2 <- forkIO $ processingThread vendor ret startIm step nextIteration max numberIm "2"
+      t3 <- forkIO $ processingThread vendor ret startIm step nextIteration max numberIm "3"
+      t4 <- forkIO $ processingThread vendor ret startIm step nextIteration max numberIm "4"
       mapM_ (\_ -> do 
-        (iteration_arr, x) <- SM.takeMVar ret
+        Ret iteration_arr x <- SM.takeMVar ret
         drawLineOfPoints dpy win gc x 0 iteration_arr) [1..max]
       killThread v1
       killThread t1
       killThread t2
+      killThread t3
+      killThread t4
       freeGC dpy gc
 
-processingThread :: RealFloat a => SM.MVar (a, Int) -> SM.MVar ([Word64], Int) -> a -> a -> (Complex a -> Complex a -> Complex a) -> Int -> Int -> String -> IO ()
+processingThread :: (NFData a, RealFloat a) => SM.MVar (Ven a) -> SM.MVar (Ret a) -> a -> a -> (Complex a -> Complex a -> Complex a) -> Int -> Int -> String -> IO ()
 processingThread vendor ret im_start step nextIteration max numberIm name = do
   forever (do 
-    (re, x) <- SM.takeMVar vendor 
-    --print name
-    SM.putMVar ret $ (calcuateLine re im_start step nextIteration max numberIm, x)) 
+    Ven re x <- SM.takeMVar vendor 
+    print name
+    SM.putMVar ret $ Ret (calcuateLine re im_start step nextIteration max numberIm) x)
 
---vendorThread :: RealFloat a => SM.MVar (a, Int) -> a -> a -> Int -> Int -> IO () 
-vendorThread vend reStart step max maxn = do mapM_ (\n -> SM.putMVar vend  (reStart + step * fromIntegral n, n)) [0.. maxn] 
+vendorThread :: (NFData a, RealFloat a)=> SM.MVar (Ven a) -> a -> a -> Int -> Int -> IO () 
+vendorThread vend reStart step max maxn = do mapM_ (\n -> SM.putMVar vend $ Ven (reStart + step * fromIntegral n) n) [0.. maxn] 
 
 calcuateLine :: RealFloat a => a -> a -> a -> (Complex a -> Complex a -> Complex a) -> Int -> Int -> [Word64]
 calcuateLine re im_start step nextIteration max numberIm = 
-  map (\ x -> scaleUpToPixel (max-1)  $ general nextIteration Nothing (re :+ (im_start + (fromIntegral x) * step)) max) [0..(numberIm-1)] 
+  map (\ x -> scaleUpToPixel (max-1)  $ general nextIteration (Just zzcosMask) (re :+ (im_start + (fromIntegral x) * step)) max) [0..(numberIm-1)] 
 
 drawLineOfPoints :: Display -> Window -> GC -> Int -> Int -> [Word64] -> IO ()
 drawLineOfPoints dpy win gc x y [] = return ()
