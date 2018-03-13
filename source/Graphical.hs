@@ -111,23 +111,24 @@ drawSetParalell dpy win startRe startIm numberRe numberIm step nextIteration max
       gc <- createGC dpy win
       t1 <- forkIO $ processingThread vendor ret startIm step nextIteration max numberIm "1"
       t2 <- forkIO $ processingThread vendor ret startIm step nextIteration max numberIm "2"
-      t3 <- forkIO $ processingThread vendor ret startIm step nextIteration max numberIm "3"
-      t4 <- forkIO $ processingThread vendor ret startIm step nextIteration max numberIm "4"
-      mapM_ (\_ -> do 
+      --t3 <- forkIO $ processingThread vendor ret startIm step nextIteration max numberIm "3"
+      --t4 <- forkIO $ processingThread vendor ret startIm step nextIteration max numberIm "4"
+      mapM_ (\bob -> do 
         Ret iteration_arr x <- SM.takeMVar ret
-        drawLineOfPoints dpy win gc x 0 iteration_arr) [1..max]
+        drawLineOfPoints dpy win gc x 0 iteration_arr
+        print bob ) [1..max]
       killThread v1
       killThread t1
       killThread t2
-      killThread t3
-      killThread t4
+      --killThread t3
+      --killThread t4
       freeGC dpy gc
 
 processingThread :: (NFData a, RealFloat a) => SM.MVar (Ven a) -> SM.MVar (Ret a) -> a -> a -> (Complex a -> Complex a -> Complex a) -> Int -> Int -> String -> IO ()
 processingThread vendor ret im_start step nextIteration max numberIm name = do
   forever (do 
     Ven re x <- SM.takeMVar vendor 
-    print name
+    --print name
     SM.putMVar ret $ Ret (calcuateLine re im_start step nextIteration max numberIm) x)
 
 vendorThread :: (NFData a, RealFloat a)=> SM.MVar (Ven a) -> a -> a -> Int -> Int -> IO () 
@@ -135,7 +136,7 @@ vendorThread vend reStart step max maxn = do mapM_ (\n -> SM.putMVar vend $ Ven 
 
 calcuateLine :: RealFloat a => a -> a -> a -> (Complex a -> Complex a -> Complex a) -> Int -> Int -> [Word64]
 calcuateLine re im_start step nextIteration max numberIm = 
-  map (\ x -> scaleUpToPixel (max-1)  $ general nextIteration (Just zzcosMask) (re :+ (im_start + (fromIntegral x) * step)) max) [0..(numberIm-1)] 
+  map (\ x -> scaleUpToPixel (max-1)  $ general nextIteration (Nothing ) (re :+ (im_start + (fromIntegral x) * step)) max) [0..(numberIm-1)] 
 
 drawLineOfPoints :: Display -> Window -> GC -> Int -> Int -> [Word64] -> IO ()
 drawLineOfPoints dpy win gc x y [] = return ()
