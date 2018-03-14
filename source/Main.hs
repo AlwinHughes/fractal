@@ -15,29 +15,13 @@ import Data.Bits
 import GHC.Conc (numCapabilities)
 import Graphical
 import Mand
-
---instance RealFloat Scientific where
-  --floatRadix a = 1
-  --floatDigits s = 1
-  --floatRange s = (10000, 10000)
-  --decodeFloat s = (coefficient s, base10Exponent s)
-  --encodeFloat c e = scientific c e
-  --exponent s = base10Exponent s
-  --significand a = a
-  --scaleFloat a b = b
-  --isNaN _ = False
-  --isInfinite _ = False
-  --isDenormalized _ = False
-  --isNegativeZero _ = False
-  --isIEEE _ = False
-  --atan2 s _ = s 
-
+import GenerateSet 
+import GenerateInParallel
 
 main :: IO ()
 main = do 
   taking_input <- newMVar True  
   --writePng ("benchmark.png") $ generateImage (\x y -> f 0.0005 (-2) (2) (2) x y) 8000 8000
-  --print $ "num of cores: " ++ show numCapabilities
   forever $ loop taking_input
 
 
@@ -56,19 +40,16 @@ loop taking_input = do
     "series" -> generateSeriesOfSets 
     "test" -> tester
     "acc" -> generateAccurateSet
+    "par" -> generateInParallel
 
 generateAccurateSet = print "yet again not finishe"
 
-promptForImput :: MVar Bool -> String ->  IO String
-promptForImput mv message = do
-  takeMVar mv
-  print message
-  input <- getLine  
-  putMVar mv True
-  if input == "*" then promptForImput mv message else return input
-
 tester = do
+<<<<<<< HEAD
   writePng ("benchmark.png") $ generateImage (\x y -> f 0.00005 (-2) (2) (2) x y) 80000 80000
+=======
+  writePng ("benchmark.png") $ generateImage (\x y -> generatingFunction  0.0005 (-2) (2) (2) x y) 8000 8000
+>>>>>>> f423f18f13e1f1b49ccb5b9572557c2078b6ed12
 --stepf srf sif realend x y
 generateSeriesOfSets = print "in complete"
 
@@ -156,6 +137,7 @@ modifyarr arr x y = foldr (\a acc -> (foldr (\b acc2 -> if x == a && b == y then
 
 roundComplex2 :: RealFloat a => Complex a -> Complex a
 roundComplex2 (a :+ b) = (fromIntegral (round $ a*1000)/1000 :+ fromIntegral (round $ b*1000)/1000)
+<<<<<<< HEAD
 
 generateSet mv = do
   step <- promptForImput mv "enter step" 
@@ -216,3 +198,5 @@ colCorect1 x = floor $ 256*(1 - exp(fromIntegral x/40))
 
 colCorect2 :: Int -> Int
 colCorect2 x = floor . (/255) . fromIntegral  $  x * x
+=======
+>>>>>>> f423f18f13e1f1b49ccb5b9572557c2078b6ed12

@@ -52,13 +52,13 @@ executable frac
   
   ghc-options: -threaded 
   -- Modules included in this executable, other than Main.
-  other-modules: Graphical, Mand
+  other-modules: Graphical, Mand, GenerateInParallel, GenerateSet
   
   -- LANGUAGE extensions used by modules in this package.
   -- other-extensions:    
   
   -- Other library packages from which modules are imported.
-  build-depends:       base >=4.10 && <4.11, split, scientific, JuicyPixels, time, X11, strict-concurrency, deepseq
+  build-depends:       base >=4.10 && <4.11, split, scientific, JuicyPixels, time, X11, strict-concurrency, deepseq, repa
   
   -- Directories containing source files.
   hs-source-dirs:      source
