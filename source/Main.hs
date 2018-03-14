@@ -22,8 +22,8 @@ import GenerateInParallel
 main :: IO ()
 main = do 
   taking_input <- newMVar True  
-  --writePng ("benchmark.png") $ generateImage (\x y -> f 0.0005 (-2) (2) (2) x y) 8000 8000
-  forever $ loop taking_input
+  writePng ("benchmark.png") $ generateImage (\x y -> generatingFunction 0.0005 (-2) (2) (2) x y) 8000 8000
+  --forever $ loop taking_input
 
 
 loop taking_input = do
