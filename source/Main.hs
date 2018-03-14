@@ -13,7 +13,6 @@ import System.Exit (exitWith, ExitCode(..))
 import Control.Concurrent 
 import Data.Bits
 import GHC.Conc (numCapabilities)
-
 import Graphical
 import Mand
 
@@ -69,7 +68,7 @@ promptForImput mv message = do
   if input == "*" then promptForImput mv message else return input
 
 tester = do
-  writePng ("benchmark.png") $ generateImage (\x y -> f 0.0005 (-2) (2) (2) x y) 8000 8000
+  writePng ("benchmark.png") $ generateImage (\x y -> f 0.00005 (-2) (2) (2) x y) 80000 80000
 --stepf srf sif realend x y
 generateSeriesOfSets = print "in complete"
 
@@ -191,7 +190,7 @@ f stepf srf sif realend x y = normal stepf srf sif realend x y
     m = general mand_iteration Nothing ((srf + (fromIntegral x) * stepf) :+ (realend - ((fromIntegral y) * stepf))) 255 
     normal stepf srf sif realend x y = PixelRGB8 (fromIntegral 0)  (fromIntegral 0) (fromIntegral m)
     fullcolour stepf srf sif realend x y = PixelRGB8 p1 p2 p3
-    max = 10
+    max = 255
     scale x = round $ 255 * ((fromIntegral x) / (fromIntegral (max * max * max -1)))
     --p1 = scale $ fromIntegral $ max * max * (div m max* max)
     --p2 = scale $ fromIntegral $ max * max * (mod (div m max) max * max)

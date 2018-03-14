@@ -5,3 +5,4 @@ ChangeLog.md
 *.png
 *.swp
 cabal.sandbox.config
+dist
