@@ -32,6 +32,9 @@ zzcos_iteration c z = c + z * z * (cos z)
 mand_iteration :: RealFloat a => Complex a -> Complex a -> Complex a 
 mand_iteration c z  = c + z*z 
 
+mand_pow_iteration :: RealFloat a => Int -> Complex a -> Complex a -> Complex a 
+mand_pow_iteration pow c z  = c + z^pow
+
 mand_iterationA :: CS -> CS -> CS 
 mand_iterationA (c:+b) (z:+x)  = (c + z*z - x* x) :+ (b + 2*z*x) 
 

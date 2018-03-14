@@ -31,7 +31,7 @@ loop taking_input = do
   --print $ head $ reverse $ general_list_D mand_iteration (0.24 :+ (0.2))
 
   --writePng ("benchmark.png") $ generateImage (\x y -> f 0.0005 (-2) (2) (2) x y) 8000 8000
-  input <- promptForImput taking_input "set for generating mandlebrot set, mov for the movement of the mandelbrot, grp for graphical, rang for range in a gif, sci for scientific use"
+  input <- promptForImput taking_input "set for generating mandlebrot set, mov for the movement of the mandelbrot, grp for graphical, rang for range in a gif, sci for using scientific data type "
   case input of
     "set" -> generateSet taking_input 
     "mov" -> generateMovement 
