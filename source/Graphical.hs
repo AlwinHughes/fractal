@@ -110,7 +110,6 @@ drawSetParalell dpy win startRe startIm numberRe numberIm step nextIteration max
       ret <- SM.newEmptyMVar
       v1 <- forkIO $ vendorThread vendor startRe step max numberRe
       gc <- createGC dpy win
-<<<<<<< HEAD
       t1 <- forkOS $ processingThread vendor ret startIm step nextIteration max numberIm "1"
       t2 <- forkOS $ processingThread vendor ret startIm step nextIteration max numberIm "2"
       t3 <- forkOS $ processingThread vendor ret startIm step nextIteration max numberIm "3"
